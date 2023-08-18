@@ -1,6 +1,6 @@
-#include <stdio.h>
+#include <octet/octet_prepare_data.h>
+#include <stdio.h> 
 
 int main(void) {
-  printf("Hello world!");
-  return 0;
+    (void)octet_prepare_training_data_from_dir("./");
 }
