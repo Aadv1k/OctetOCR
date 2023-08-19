@@ -66,14 +66,83 @@ OctetData *octet_prepare_training_data_from_dir(const char *dirpath) {
   return data;
 }
 
-void octet_serialize_training_data_to_file(OctetData *data, const char filepath) {
-  assert(0 && "Not implemented");
+void octet_dump_training_data_to_file(OctetData *data, const char* filepath) {
+  FILE* file = fopen(filepath, "w");
+
+  if (file == NULL) {
+    fprintf(stderr, "ERROR: Unable to open file '%s': %s\n", filepath, strerror(errno));
+    exit(1);
+  }
+
+  fprintf(file, "total_labels: %d\n\n", data->characterCount);
+
+  for (int i = 0; i < data->characterCount; i++) {
+    fprintf(file, "bytes: %.*s\n", data->characters[i].width * data->characters[i].height, data->characters[i].bytes);
+    fprintf(file, "width: %d\n", data->characters[i].width);
+    fprintf(file, "height: %d\n", data->characters[i].height);
+    fprintf(file, "label: %c\n", data->characters[i].label);
+    fprintf(file, "\n\n");
+  }
+
+  if (fclose(file) != 0) {
+    fprintf(stderr, "ERROR: Unable to close file '%s': %s\n", filepath, strerror(errno));
+    exit(1);
+  }
+}
+
+
+OctetData *octet_read_training_data_from_file(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+      fprintf(stderr, "ERROR: Unable to open file '%s': %s\n", filepath, strerror(errno));
+      exit(1);
+    }
+
+    OctetData *octetData = (OctetData *)malloc(sizeof(OctetData));
+
+    int totalLabels;
+
+    if (fscanf(file, "total_labels: %d\n", &totalLabels) != 1) {
+        fprintf(stderr, "ERROR: Unable to read total_labels\n");
+        fclose(file);
+        free(octetData);
+        return NULL;
+    }
+
+    octetData->characters = (OctetCharacter *)malloc(totalLabels * sizeof(OctetCharacter));
+
+    octetData->characterCount = totalLabels;
+
+    for (int i = 0; i < totalLabels; i++) {
+        OctetCharacter *character = &octetData->characters[i];
+
+        int width, height;
+        if (fscanf(file, "bytes: <binary_pixel_data_%*d>\n") != 0 &&
+            fscanf(file, "width: %d\n", &width) == 1 &&
+            fscanf(file, "height: %d\n", &height) == 1 &&
+            fscanf(file, "label: %c\n", &character->label) == 1) {
+            
+            character->bytes = (unsigned char *)malloc(width * height * sizeof(unsigned char));
+            fread(character->bytes, sizeof(unsigned char), width * height, file);
+        } else {
+            fprintf(stderr, "ERROR: Corrupted file format, unable to read!\n");
+            fclose(file);
+            free(octetData->characters);
+            free(octetData);
+            return NULL;
+        }
+    }
+
+    fclose(file);
+    return octetData;
 }
 
 void octet_free_data(OctetData* data) {
-  assert(0 && "Not implemented");
-}
-
-void octet_prepare_training_data_from_file(const char *filepath) {
-  assert(0 && "Not implemented");
+    if (data) {
+        for (int i = 0; i < data->characterCount; i++) {
+            free(data->characters[i].bytes);
+        }
+        free(data->characters);
+        free(data);
+    }
 }
