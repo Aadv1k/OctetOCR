@@ -1,4 +1,4 @@
-@echo off
+nd-@echo off
 
 SET CC=gcc
 SET CFLAGS=-std=c99
