@@ -18,6 +18,10 @@ OctetData *octet_prepare_training_data_from_dir(const char *dirpath) {
   }
 
   OctetData *data = malloc(sizeof(OctetData));
+  if (!data) {
+    closedir(dir); // Close the directory before exiting due to memory allocation failure
+    return NULL;
+  }
   data->characters = NULL;
   data->characterCount = 0;
 
@@ -28,13 +32,6 @@ OctetData *octet_prepare_training_data_from_dir(const char *dirpath) {
 
     if (strcmp(fileExt, ".png") != 0 && strcmp(fileExt, ".jpg") != 0 && strcmp(fileExt, ".jpeg") != 0)
       continue;
-
-    fileExt[0] = '\0';
-
-    if (strlen(dir_item->d_name) <= 4) {
-      fprintf(stderr, "WARNING: Ignoring file with invalid name: %s\n", dir_item->d_name);
-      continue;
-    }
 
     char label = dir_item->d_name[0];
     char filepath[256];
@@ -48,26 +45,41 @@ OctetData *octet_prepare_training_data_from_dir(const char *dirpath) {
     }
 
     if (channels != 1) {
-      fprintf(stderr, "WARNING: Ignoring image '%s': Training data expects binary or single-channel images\n", filepath);
-      stbi_image_free(image_bytes);
-      continue;
+      octet_convert_rgb_image_to_grayscale(image_bytes, width, height);
+      channels = 1;
     }
 
-    octet_crop_edges_grayscale(image_bytes, &width, &height);
+    //octet_crop_edges_grayscale(image_bytes, &width, &height);
     octet_covert_grayscale_image_to_bits(image_bytes, width, height);
 
-    data->characters = realloc(data->characters, (data->characterCount + 1) * sizeof(OctetCharacter));
-    data->characters[data->characterCount] = (OctetCharacter){
+    OctetCharacter newCharacter = {
       .bytes = image_bytes,
       .label = label,
       .width = width,
       .height = height
     };
+
+    OctetCharacter *temp = realloc(data->characters, (data->characterCount + 1) * sizeof(OctetCharacter));
+    if (!temp) {
+      stbi_image_free(image_bytes); // Free the image_bytes if realloc fails
+      continue;
+    }
+
+    data->characters = temp;
+    data->characters[data->characterCount] = newCharacter;
     data->characterCount++;
   }
 
   closedir(dir);
   return data;
+}
+
+void octet_free_data(OctetData *data) {
+  for (size_t i = 0; i < data->characterCount; i++) {
+    stbi_image_free(data->characters[i].bytes);
+  }
+  free(data->characters);
+  free(data);
 }
 
 void octet_dump_training_data_to_file(OctetData *data, const char* filepath) {
@@ -141,12 +153,3 @@ OctetData *octet_read_training_data_from_file(const char *filename) {
     return octetData;
 }
 
-void octet_free_data(OctetData* data) {
-    if (data) {
-        for (int i = 0; i < data->characterCount; i++) {
-            free(data->characters[i].bytes);
-        }
-        free(data->characters);
-        free(data);
-    }
-}
