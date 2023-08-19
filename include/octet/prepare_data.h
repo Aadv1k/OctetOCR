@@ -3,6 +3,8 @@
 
 typedef struct {
   unsigned char * bytes;
+  int width;
+  int height; 
   char label;
 } OctetCharacter;
 

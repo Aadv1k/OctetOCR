@@ -1,9 +1,13 @@
 #include <octet/prepare_data.h>
-#include <octet/stb/stb_image.h>
+#include <octet/image_processing.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <octet/stb_image.h>  
 
 #include <dirent.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 OctetData *octet_prepare_training_data_from_dir(const char *dirpath) {
   DIR *dir;
@@ -94,7 +98,7 @@ void octet_dump_training_data_to_file(OctetData *data, const char* filepath) {
 OctetData *octet_read_training_data_from_file(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
-      fprintf(stderr, "ERROR: Unable to open file '%s': %s\n", filepath, strerror(errno));
+      fprintf(stderr, "ERROR: Unable to open file '%s': %s\n", filename, strerror(errno));
       exit(1);
     }
 

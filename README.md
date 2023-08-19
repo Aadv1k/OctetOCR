@@ -6,11 +6,11 @@ Since this project is under development, things may change at anytime and I am p
 
 ## Build
 
-Currently you can build an executable, I will switch this out for tests and such
-
 ```console
-.\build.bat
+.\build.bat TEST
+.\octet_test.exe
 ```
+
 
 ## Example
 
