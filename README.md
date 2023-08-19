@@ -11,3 +11,23 @@ Currently you can build an executable, I will switch this out for tests and such
 ```console
 .\build.bat
 ```
+
+## Example
+
+```c
+#include <octet.h>
+
+    /* ... */
+
+    if (!dataFileExists) {
+        OctetData* data = octet_prepare_training_data_from_dir("./data");
+        octet_dump_training_data_to_file("./data.dat");
+    }
+
+
+    octet_free_data(data);
+
+    /* ... */
+```
+
+

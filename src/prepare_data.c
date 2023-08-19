@@ -1,4 +1,4 @@
-#include <octet/octet_prepare_data.h>
+#include <octet/prepare_data.h>
 #include <octet/stb/stb_image.h>
 
 #include <dirent.h>
