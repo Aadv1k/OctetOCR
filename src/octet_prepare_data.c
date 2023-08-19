@@ -50,6 +50,7 @@ OctetData *octet_prepare_training_data_from_dir(const char *dirpath) {
     }
 
     octet_crop_edges_grayscale(image_bytes, &width, &height);
+    octet_covert_grayscale_image_to_bits(image_bytes, width, height);
 
     data->characters = realloc(data->characters, (data->characterCount + 1) * sizeof(OctetCharacter));
     data->characters[data->characterCount] = (OctetCharacter){

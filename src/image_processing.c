@@ -2,6 +2,15 @@
 
 #include <string.h>
 
+#define OCTET_THRESHOLD 128
+
+void octet_covert_grayscale_image_to_bits(unsigned char* data, int width, int height) {
+  for (int i = 0; i < width*height; i++) {
+    data[i] = data[i] >= OCTET_THRESHOLD ? 1 : 0;
+  }
+}
+
+
 void octet_crop_edges_grayscale(unsigned char* data, int *width, int *height) {
   // crop the left edge
   for (int x = 0; x < *width; x++) {
