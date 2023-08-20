@@ -11,20 +11,22 @@ Since this project is under development, things may change at anytime and I am p
 .\octet_test.exe
 ```
 
-
 ## Example
+
 
 ```c
 #include <octet.h>
 
     /* ... */
 
+    OctetData* data;
+
     if (!dataFileExists) {
-        OctetData* data = octet_prepare_training_data_from_dir("./data");
-        octet_dump_training_data_to_file("./data.dat");
+        data = octet_load_training_data_from_dir("./dataset");
+        octet_write_training_data_to_csv("./data.csv");
     }
 
-
+    data = octet_read_training_data_from_csv("./data.csv");
     octet_free_data(data);
 
     /* ... */
