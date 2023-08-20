@@ -1,4 +1,4 @@
-#include <octet/image_processing.h> 
+#include <octet/image.h> 
 
 #include <string.h>
 #include <stdlib.h>

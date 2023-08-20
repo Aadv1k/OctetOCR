@@ -3,7 +3,7 @@
 extern MunitTest dataReadWriteTests[];
 
 static const MunitSuite test_suite = {
-  (char*) "Read_Write/",
+  (char*) "Read_Write",
   dataReadWriteTests,
   NULL,
   1,
