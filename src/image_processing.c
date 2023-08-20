@@ -32,9 +32,9 @@ void octet_convert_rgb_image_to_grayscale(unsigned char* data, int width, int he
   data = grayscale_data;
 }
 
-void octet_covert_grayscale_image_to_bits(unsigned char* data, int width, int height) {
+void octet_threshold_grayscale_image(unsigned char* data, int width, int height, const int threshold) {
   for (int i = 0; i < width*height; i++) {
-    data[i] = data[i] >= OCTET_THRESHOLD ? 1 : 0;
+    data[i] = data[i] >= threshold ? 255 : 0;
   }
 }
 

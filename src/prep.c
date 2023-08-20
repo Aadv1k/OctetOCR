@@ -50,6 +50,10 @@ OctetData *octet_load_training_data_from_dir(const char *dirpath) {
             channels = 1;
         }
 
+        // TODO: implement these propelry
+        //octet_crop_edges_grayscale(image_bytes, &width, &height);
+        //octet_threshold_grayscale_image(image_bytes, width, height,  /* threshold */ 128);
+
         OctetCharacter character = {
             .bytes = malloc(sizeof(unsigned char) * width * height),
             .label = nameWithoutExt[0],

@@ -1,4 +1,5 @@
 #include <octet/train.h>
+#include <assert.h> 
 
 int octet_knn_calculate_distance(OctetData* trainingData, OctetCharacter character) {
   assert(0 && "octet_knn_calculate_distance not implemented");
