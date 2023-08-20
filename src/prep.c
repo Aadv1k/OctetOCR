@@ -8,7 +8,6 @@
 #include <assert.h>
 #include <dirent.h>
 
-
 OctetData *octet_load_training_data_from_dir(const char *dirpath) {
     DIR *directory;
     struct dirent *item;
