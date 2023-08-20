@@ -39,12 +39,20 @@ static MunitResult ReadDataFromFile_LocalFile_ShouldReadAndMatch(const MunitPara
     OctetData* trainingDataFromFile = octet_load_training_data_from_csv(TEMP_DATA_PATH);
     munit_assert_not_null(trainingDataFromFile);
 
+    // Assuming you have 'trainingData' initialized and populated with data for comparison
     munit_assert_int(trainingDataFromFile->characterCount, ==, trainingData->characterCount);
 
-    munit_assert_memory_equal(sizeof(OctetCharacter) * trainingData->characterCount, trainingDataFromFile->characters, trainingData->characters);
+    for (int i = 0; i < trainingDataFromFile->characterCount; i++) {
+        OctetCharacter *charFromFile = &trainingDataFromFile->characters[i];
+        OctetCharacter *charFromData = &trainingData->characters[i];
 
-    octet_free_training_data(trainingData);
+        munit_assert_int(charFromFile->width, ==, charFromData->width);
+        munit_assert_int(charFromFile->height, ==, charFromData->height);
+        munit_assert_int(charFromFile->label, ==, charFromData->label);
+    }
+
     octet_free_training_data(trainingDataFromFile);
+    octet_free_training_data(trainingData);
     return MUNIT_OK;
 }
 

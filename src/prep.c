@@ -115,7 +115,6 @@ OctetData *octet_load_training_data_from_csv(const char *filename) {
         return NULL;
     }
 
-
     OctetData *data = malloc(sizeof(OctetData));
     if (data == NULL) {
         fclose(csvFile);
@@ -125,14 +124,14 @@ OctetData *octet_load_training_data_from_csv(const char *filename) {
     data->characterCount = 0;
 
     int numLines = 0;
-    char buffer[1024 * 1024];
+    char buffer[1024 * 1024]; // Reduced buffer size
     while (fgets(buffer, sizeof(buffer), csvFile) != NULL) {
-        
         numLines++;
     }
     rewind(csvFile);
 
     data->characterCount = numLines - 1;
+
     data->characters = malloc(sizeof(OctetCharacter) * data->characterCount);
     if (data->characters == NULL) {
         free(data);
@@ -147,25 +146,27 @@ OctetData *octet_load_training_data_from_csv(const char *filename) {
         return NULL;
     }
 
-    puts("\nHello there!");
-
-
     int i = 0;
     while (fgets(buffer, sizeof(buffer), csvFile) != NULL) {
         OctetCharacter *character = &data->characters[i];
         int width, height;
+        char label;
+        uint8_t imageBuffer[1024]; // Reduced buffer size
 
-        if (sscanf(buffer, "%d,%d,%c,", &width, &height, &character->label) != 3) {
+        if (sscanf(buffer, "%d,%d,%c,%s\n", &width, &height, &label, (char *)imageBuffer) != 4) {
+            for (int j = 0; j < i; j++) {
+                free(data->characters[j].bytes);
+            }
             free(data->characters);
             free(data);
             fclose(csvFile);
             return NULL;
         }
 
-        int numBytes = width * height;
         character->width = width;
         character->height = height;
-        character->bytes = malloc(sizeof(unsigned char) * numBytes);
+        character->label = label;
+        character->bytes = malloc(sizeof(uint8_t) * width * height);
         if (character->bytes == NULL) {
             for (int j = 0; j < i; j++) {
                 free(data->characters[j].bytes);
@@ -176,10 +177,9 @@ OctetData *octet_load_training_data_from_csv(const char *filename) {
             return NULL;
         }
 
-        char *token = strtok(NULL, ",");
-        for (int j = 0; j < numBytes && token != NULL; j++) {
-            character->bytes[j] = (unsigned char)strtol(token, NULL, 16);
-            token = strtok(NULL, " ,\n");
+        // Copy the image data into the bytes array
+        for (int j = 0; j < width * height; j++) {
+            character->bytes[j] = imageBuffer[j];
         }
 
         i++;
