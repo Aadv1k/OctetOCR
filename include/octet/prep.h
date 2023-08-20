@@ -15,7 +15,7 @@ typedef struct {
 
 OctetData *octet_load_training_data_from_dir(const char *dirpath);
 
-void octet_write_data_to_csv(OctetData *data, const char* filepath);
+void octet_write_training_data_to_csv(OctetData *data, const char* filepath);
 
 OctetData *octet_load_training_data_from_csv(const char *filename);
 

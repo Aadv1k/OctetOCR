@@ -80,11 +80,104 @@ void octet_free_training_data(OctetData *data) {
     free(data);
 }
 
-void octet_write_data_to_csv(OctetData *data, const char* filepath) {
-  assert(0 && "octet_write_data_to_csv not implemented");
+void octet_write_training_data_to_csv(OctetData *data, const char *filepath) {
+    if (data == NULL || data->characterCount == 0 || data->characters == NULL) {
+        return; // Nothing to write
+    }
+
+    FILE *csvFile = fopen(filepath, "w");
+    if (csvFile == NULL) {
+        return;
+    }
+
+    fprintf(csvFile, "width,height,label,image_bytes_as_hex\n");
+
+    for (int i = 0; i < data->characterCount; i++) {
+        OctetCharacter *character = &data->characters[i];
+
+        fprintf(csvFile, "%d,%d,%c,", character->width, character->height, character->label);
+
+        for (int j = 0; j < character->width * character->height; j++) {
+            fprintf(csvFile, "%02X", character->bytes[j]);
+            if (j < character->width * character->height - 1) {
+                fprintf(csvFile, " ");
+            }
+        }
+
+        fprintf(csvFile, "\n");
+    }
+    fclose(csvFile);
 }
 
 OctetData *octet_load_training_data_from_csv(const char *filename) {
-  assert(0 && "octet_load_training_data_from_csv not implemented");
-}
+    FILE *csvFile = fopen(filename, "r");
+    if (csvFile == NULL) {
+        return NULL;
+    }
 
+    OctetData *data = malloc(sizeof(OctetData));
+    if (data == NULL) {
+        fclose(csvFile);
+        return NULL;
+    }
+
+    int numLines = 0;
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), csvFile) != NULL) {
+        numLines++;
+    }
+    rewind(csvFile);
+
+    data->characterCount = numLines - 1;
+    data->characters = malloc(sizeof(OctetCharacter) * data->characterCount);
+    if (data->characters == NULL) {
+        free(data);
+        fclose(csvFile);
+        return NULL;
+    }
+
+    if (fgets(buffer, sizeof(buffer), csvFile) == NULL) {
+        free(data->characters);
+        free(data);
+        fclose(csvFile);
+        return NULL;
+    }
+
+    int i = 0;
+    while (fgets(buffer, sizeof(buffer), csvFile) != NULL) {
+        OctetCharacter *character = &data->characters[i];
+        int width, height;
+
+        if (sscanf(buffer, "%d,%d,%c,", &width, &height, &character->label) != 3) {
+            free(data->characters);
+            free(data);
+            fclose(csvFile);
+            return NULL;
+        }
+
+        int numBytes = width * height;
+        character->width = width;
+        character->height = height;
+        character->bytes = malloc(sizeof(unsigned char) * numBytes);
+        if (character->bytes == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(data->characters[j].bytes);
+            }
+            free(data->characters);
+            free(data);
+            fclose(csvFile);
+            return NULL;
+        }
+
+        char *token = strtok(NULL, ",");
+        for (int j = 0; j < numBytes && token != NULL; j++) {
+            character->bytes[j] = (unsigned char)strtol(token, NULL, 16);
+            token = strtok(NULL, " ,\n");
+        }
+
+        i++;
+    }
+
+    fclose(csvFile);
+    return data;
+}}
