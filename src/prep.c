@@ -90,7 +90,7 @@ void octet_write_training_data_to_csv(OctetData *data, const char *filepath) {
         return;
     }
 
-    fprintf(csvFile, "width,height,label,image_bytes_as_hex\n");
+    fprintf(csvFile, "width,height,label,image_bytes_as_uint8\n");
 
     for (int i = 0; i < data->characterCount; i++) {
         OctetCharacter *character = &data->characters[i];
@@ -98,7 +98,7 @@ void octet_write_training_data_to_csv(OctetData *data, const char *filepath) {
         fprintf(csvFile, "%d,%d,%c,", character->width, character->height, character->label);
 
         for (int j = 0; j < character->width * character->height; j++) {
-            fprintf(csvFile, "%02X", character->bytes[j]);
+            fprintf(csvFile, "%d", character->bytes[j]);
             if (j < character->width * character->height - 1) {
                 fprintf(csvFile, " ");
             }
@@ -115,15 +115,19 @@ OctetData *octet_load_training_data_from_csv(const char *filename) {
         return NULL;
     }
 
+
     OctetData *data = malloc(sizeof(OctetData));
     if (data == NULL) {
         fclose(csvFile);
         return NULL;
     }
 
+    data->characterCount = 0;
+
     int numLines = 0;
-    char buffer[256];
+    char buffer[1024 * 1024];
     while (fgets(buffer, sizeof(buffer), csvFile) != NULL) {
+        
         numLines++;
     }
     rewind(csvFile);
@@ -142,6 +146,9 @@ OctetData *octet_load_training_data_from_csv(const char *filename) {
         fclose(csvFile);
         return NULL;
     }
+
+    puts("\nHello there!");
+
 
     int i = 0;
     while (fgets(buffer, sizeof(buffer), csvFile) != NULL) {
@@ -180,4 +187,4 @@ OctetData *octet_load_training_data_from_csv(const char *filename) {
 
     fclose(csvFile);
     return data;
-}}
+}
