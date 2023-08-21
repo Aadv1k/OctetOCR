@@ -7,7 +7,7 @@ static const MunitSuite test_suite = {
   (char*) "Octet/",
   NULL,
   (MunitSuite[]) {
-    //{ (char*) "Preparer", dataReadWriteTests, NULL, 1, MUNIT_SUITE_OPTION_NONE },
+    { (char*) "Preparer", dataReadWriteTests, NULL, 1, MUNIT_SUITE_OPTION_NONE },
     { (char*) "Trainer", trainerTests, NULL, 1, MUNIT_SUITE_OPTION_NONE },
     { NULL, NULL, NULL, 0, MUNIT_SUITE_OPTION_NONE }
   },

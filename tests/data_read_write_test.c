@@ -64,8 +64,8 @@ static MunitResult ReadDataFromFile_LocalFile_ShouldReadAndMatch(const MunitPara
 }
 
 MunitTest dataReadWriteTests[] = {
-    { (char*) "/PrepareDataFromDir_Dataset_ShouldProcessAndLoad", PrepareDataFromDir_Dataset_ShouldProcessAndLoad, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-    { (char*) "/WriteDataToFile_OctetData_ShouldWrite", WriteDataToFile_OctetData_ShouldWrite, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-    { (char*) "/ReadDataFromFile_LocalFile_ShouldReadAndMatch", ReadDataFromFile_LocalFile_ShouldReadAndMatch, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    { (char*) "/PrepareDataFromDir_LocalDataset_ShouldLoad", PrepareDataFromDir_Dataset_ShouldProcessAndLoad, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    { (char*) "/WriteOctetData_Local_CSV_ShouldWrite", WriteDataToFile_OctetData_ShouldWrite, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    { (char*) "/ReadOctetData_Local_CSV_ShouldMatchMemory", ReadDataFromFile_LocalFile_ShouldReadAndMatch, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

@@ -4,7 +4,7 @@
 #define TEST_DATASET_PATH "./dataset/"
 #define TEMP_DATA_PATH "./temp.csv"
 
-MunitResult Knn_Dataset_ShouldComputeWithoutFail(const MunitParameter params[], void* data) {
+MunitResult Knn_ExactMatch_ShouldCompute(const MunitParameter params[], void* data) {
     (void)params;
     (void)data;
 
@@ -22,7 +22,17 @@ MunitResult Knn_Dataset_ShouldComputeWithoutFail(const MunitParameter params[], 
     return MUNIT_OK;
 }
 
+MunitResult Knn_SlightMatch_ShouldCompute(const MunitParameter params[], void* data) {
+    (void)params;
+    (void)data;
+
+    return MUNIT_SKIP;
+}
+
+
+
 MunitTest trainerTests[] = {
-    { (char*) "/Knn_Dataset_ShouldComputeWithoutFail", Knn_Dataset_ShouldComputeWithoutFail, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    { (char*) "/Knn_ExactMatch_ShouldCompute", Knn_ExactMatch_ShouldCompute, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+    { (char*) "/Knn_SlightMatch_ShouldCompute", Knn_SlightMatch_ShouldCompute, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
     { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
