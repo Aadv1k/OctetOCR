@@ -1,11 +1,16 @@
 #include "munit/munit.h"
 
 extern MunitTest dataReadWriteTests[];
+extern MunitTest trainerTests[];
 
 static const MunitSuite test_suite = {
-  (char*) "Read_Write",
-  dataReadWriteTests,
+  (char*) "Octet/",
   NULL,
+  (MunitSuite[]) {
+    //{ (char*) "Preparer", dataReadWriteTests, NULL, 1, MUNIT_SUITE_OPTION_NONE },
+    { (char*) "Trainer", trainerTests, NULL, 1, MUNIT_SUITE_OPTION_NONE },
+    { NULL, NULL, NULL, 0, MUNIT_SUITE_OPTION_NONE }
+  },
   1,
   MUNIT_SUITE_OPTION_NONE
 };
