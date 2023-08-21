@@ -4,16 +4,21 @@
 #define TEST_DATASET_PATH "./dataset/"
 #define TEMP_DATA_PATH "./temp.csv"
 
-static OctetData *trainingData;
-
 MunitResult Knn_Dataset_ShouldComputeWithoutFail(const MunitParameter params[], void* data) {
     (void)params;
     (void)data;
 
-    OctetData* trainingData = octet_load_training_data_from_dir(TEST_DATASET_PATH);
-    munit_assert_not_null(trainingData);
+    OctetData* trainingDataFromMem = octet_load_training_data_from_dir(TEST_DATASET_PATH);
+    munit_assert_not_null(trainingDataFromMem);
 
-    octet_free_training_data(trainingData);
+    char possibleMatch = octet_k_nearest_neighbour(trainingDataFromMem->characters[0], trainingDataFromMem, 3);
+    char possibleMatch2 = octet_k_nearest_neighbour(trainingDataFromMem->characters[1], trainingDataFromMem, 3);
+
+    munit_assert_char('A', ==, possibleMatch);
+    munit_assert_char('B', ==, trainingDataFromMem->characters[1].label);
+    munit_assert_char('D', !=, trainingDataFromMem->characters[2].label);
+
+    octet_free_training_data(trainingDataFromMem);
     return MUNIT_OK;
 }
 
