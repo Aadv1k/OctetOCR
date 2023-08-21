@@ -3,9 +3,14 @@
 
 #include <octet/prep.h>
 
-void octet_k_nearest_neighbour(OctetData* trainingData, OctetData* testingData, const int k);
+typedef struct {
+  char label;
+  float distance;
+} OctetDistance;
 
-int octet_knn_calculate_distance(OctetData* trainingData, OctetCharacter character);
+float octet_knn_calculate_distance_for_character(OctetCharacter trainingCharacter, OctetCharacter testingCharacter);
+int qsort_compare(const void *a, const void *b);
+char octet_k_nearest_neighbour(OctetData* trainingData, OctetCharacter testCharacter, const int k);
 
 #endif // _OCTET_TRAIN_H
 

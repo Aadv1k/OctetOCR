@@ -50,8 +50,8 @@ OctetData *octet_load_training_data_from_dir(const char *dirpath) {
             channels = 1;
         }
 
-        octet_threshold_grayscale_image(image_bytes, width, height,  /* threshold */ 128);
-        octet_crop_edges_grayscale(image_bytes, &width, &height);
+        //octet_threshold_grayscale_image(image_bytes, width, height,  /* threshold */ 128);
+        //octet_crop_edges_grayscale(image_bytes, &width, &height);
 
         OctetCharacter character = {
             .bytes = malloc(sizeof(unsigned char) * width * height),
