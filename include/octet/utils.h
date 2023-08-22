@@ -3,6 +3,6 @@
 
 #include <octet.h>
 
-void utils_write_character_to_ppm(OctetCharacter character, const char* filepath);
+void utils_write_character_to_pbm(OctetCharacter character, const char* filepath);
 
 #endif // _OCTET_UTILS_H

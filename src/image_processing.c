@@ -39,13 +39,34 @@ void octet_threshold_grayscale_image(unsigned char* data, int width, int height,
 
 
 void octet_crop_edges_grayscale(unsigned char* data, int *width, int *height) {
-  for (int x = 0; x < *width; x++) {
+    int minRightEdge = *width; 
+    int maxLeftEdge = 0; 
+    
     for (int y = 0; y < *height; y++) {
-      if (data[y * (*width) + x] != 255) {
-        memmove(data, data + x, (*width - x) * (*height));
-        *width -= x;
-        break;
-      }
+        for (int x = 0; x < *width; x++) {
+            if (data[y * (*width) + x] != 255) {  // Assuming white is represented by 255
+                if (x < minRightEdge) {
+                    minRightEdge = x;
+                }
+                if (x > maxLeftEdge) {
+                    maxLeftEdge = x;
+                }
+            }
+        }
     }
-  }
+    
+    // Calculate the new width and crop the image data
+    int newWidth = maxLeftEdge - minRightEdge + 1;
+    unsigned char* newData = (unsigned char*)malloc(newWidth * (*height) * sizeof(unsigned char));
+    
+    for (int y = 0; y < *height; y++) {
+        for (int x = minRightEdge; x <= maxLeftEdge; x++) {
+            newData[(y * newWidth) + (x - minRightEdge)] = data[(y * (*width)) + x];
+        }
+    }
+    
+    *width = newWidth;
+    memcpy(data, newData, newWidth * (*height) * sizeof(unsigned char));
+    
+    free(newData);
 }

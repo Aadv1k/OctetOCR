@@ -14,6 +14,7 @@ OctetCharacter* octet_load_character_from_image(const char *filepath) {
   int width, height, channels;
   unsigned char *image_bytes = stbi_load(filepath, &width, &height, &channels, 0);
   if (image_bytes == NULL) {
+    free(character);
     return NULL;
   }
 
@@ -23,7 +24,6 @@ OctetCharacter* octet_load_character_from_image(const char *filepath) {
   }
 
   octet_threshold_grayscale_image(image_bytes, width, height,  /* threshold */ 128);
-  //octet_crop_edges_grayscale(image_bytes, &width, &height);
 
   character->bytes = malloc(sizeof(unsigned char) * width * height);
   character->label = '\0';
@@ -74,7 +74,6 @@ OctetData *octet_load_training_data_from_dir(const char *dirpath) {
         
         octet_threshold_grayscale_image(image_bytes, width, height,  /* threshold */ 128);
 
-
         data->characterCount++;
         data->characters = realloc(data->characters, sizeof(OctetCharacter) * data->characterCount);
         data->characters[data->characterCount - 1] = (OctetCharacter){
@@ -99,6 +98,7 @@ void octet_free_training_data(OctetData *data) {
 }
 
 void octet_write_training_data_to_csv(OctetData *data, const char *filepath) {
+
     if (data == NULL || data->characterCount == 0 || data->characters == NULL) {
         return;
     }
@@ -112,6 +112,12 @@ void octet_write_training_data_to_csv(OctetData *data, const char *filepath) {
 
     for (int i = 0; i < data->characterCount; i++) {
         OctetCharacter *character = &data->characters[i];
+
+       if (character->width <= 0 && character->height <= 0) {
+            fclose(csvFile);
+            return;
+        }
+
 
         fprintf(csvFile, "%d,%d,%c,", character->width, character->height, character->label);
 

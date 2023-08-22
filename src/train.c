@@ -10,17 +10,18 @@
 
 float octet_knn_calculate_distance_for_character(OctetCharacter trainingCharacter, OctetCharacter testingCharacter) {
   double finalDistance = 0;
+  int commonWidth = (trainingCharacter.width < testingCharacter.width) ? trainingCharacter.width : testingCharacter.width;
 
   for (int i = 0; i < trainingCharacter.height; i++) {
-    for (int j = 0; j < trainingCharacter.width; j++) {
-      int difference = abs(trainingCharacter.bytes[i * trainingCharacter.width + j] - testingCharacter.bytes[i * trainingCharacter.width + j]);
+    for (int j = 0; j < commonWidth; j++) {
+      int difference = trainingCharacter.bytes[i * trainingCharacter.width + j] - testingCharacter.bytes[i * trainingCharacter.width + j];
       finalDistance += difference * difference;
     }
   }
   return sqrt(finalDistance);
 }
 
-int qsort_compare(const void *a, const void *b) {
+int qsort__distance_compare(const void *a, const void *b) {
   const OctetDistance *da = (const OctetDistance *)a;
   const OctetDistance *db = (const OctetDistance *)b;
 
@@ -46,14 +47,13 @@ char octet_k_nearest_neighbour(OctetCharacter testCharacter, OctetData* training
     dCount++;
   }
 
-  qsort(distances, dCount, sizeof(OctetDistance), qsort_compare);
+  qsort(distances, dCount, sizeof(OctetDistance), qsort__distance_compare);
   int labelCounts[numOfLabels] = {0};
 
   for (int i = 0; i < k; i++) {
     int neighborLabel = distances[i].label;
     labelCounts[neighborLabel]++;
   }
-
 
   int maxVotes = labelCounts[0];
   int predictedLabel = 0;
