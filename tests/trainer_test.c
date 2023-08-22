@@ -6,6 +6,7 @@
 
 #define TEST_A_PATH "./tests/test_data/test-A.jpg"
 #define TEST_A_CURSIVE_PATH "./tests/test_data/test-A-cursive.jpg"
+#define TEST_A_ROUNDED_PATH "./tests/test_data/test-A-rounded.jpg"
 
 MunitResult Knn_ExactMatch_ShouldCompute(const MunitParameter params[], void* data) {
     (void)params;
@@ -34,21 +35,23 @@ MunitResult Knn_SlightMatchesOf_A_ShouldCompute(const MunitParameter params[], v
 
     OctetCharacter* character1 = octet_load_character_from_image(TEST_A_PATH);
     munit_assert_not_null(character1);
+    char predictedLabel = octet_k_nearest_neighbour(*character1, trainingDataFromMem, /* k */ 3);
+    munit_assert_char('A', ==, predictedLabel);
+    octet_free_character(character1);
 
     OctetCharacter* character2 = octet_load_character_from_image(TEST_A_CURSIVE_PATH);
     munit_assert_not_null(character2);
-
-    char predictedLabel = octet_k_nearest_neighbour(*character1, trainingDataFromMem, /* k */ 3);
-    munit_assert_char('A', ==, predictedLabel);
-    
     char predictedLabel2 = octet_k_nearest_neighbour(*character2, trainingDataFromMem, /* k */ 3);
-    munit_assert_char('A', ==, predictedLabel);
+    munit_assert_char('A', ==, predictedLabel2);
+    octet_free_character(character2);
 
-    free(character1->bytes);
-    free(character1);
 
-    free(character2->bytes);
-    free(character2);
+    OctetCharacter* character3 = octet_load_character_from_image(TEST_A_ROUNDED_PATH);
+    munit_assert_not_null(character3);
+    char predictedLabel3 = octet_k_nearest_neighbour(*character2, trainingDataFromMem, /* k */ 3);
+    munit_assert_char('A', ==, predictedLabel3);
+    octet_free_character(character3);
+
 
     octet_free_training_data(trainingDataFromMem);
     return MUNIT_OK;

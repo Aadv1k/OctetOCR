@@ -22,13 +22,18 @@ OctetCharacter* octet_load_character_from_image(const char *filepath) {
     channels = 1;
   }
 
-  //octet_threshold_grayscale_image(image_bytes, width, height,  /* threshold */ 128);
+  octet_threshold_grayscale_image(image_bytes, width, height,  /* threshold */ 128);
   //octet_crop_edges_grayscale(image_bytes, &width, &height);
 
   character->bytes = malloc(sizeof(unsigned char) * width * height);
   character->label = '\0';
   character->width = width;
   character->height = height;
+}
+
+void octet_free_character(OctetCharacter* character) {
+  free(character->bytes);
+  free(character);
 }
 
 OctetData *octet_load_training_data_from_dir(const char *dirpath) {
@@ -52,18 +57,13 @@ OctetData *octet_load_training_data_from_dir(const char *dirpath) {
         if (strcmp(ext, "jpg") != 0 && strcmp(ext, "jpeg") != 0)
             continue;
 
-
         char filepath[256];
         snprintf(filepath, sizeof(filepath), "%s/%s", dirpath, dName);
 
-        // TODO: this is very unsafe
-        char *nameWithoutExt = strdup(dName);
-        nameWithoutExt[strlen(nameWithoutExt) - strlen(ext) - 1] = '\0';
 
         int width, height, channels;
         unsigned char *image_bytes = stbi_load(filepath, &width, &height, &channels, 0);
         if (image_bytes == NULL) {
-            free(nameWithoutExt);
             continue;
         }
 
@@ -71,17 +71,18 @@ OctetData *octet_load_training_data_from_dir(const char *dirpath) {
             octet_convert_rgb_image_to_grayscale(image_bytes, width, height);
             channels = 1;
         }
+        
+        octet_threshold_grayscale_image(image_bytes, width, height,  /* threshold */ 128);
+
 
         data->characterCount++;
         data->characters = realloc(data->characters, sizeof(OctetCharacter) * data->characterCount);
         data->characters[data->characterCount - 1] = (OctetCharacter){
-            .bytes = malloc(sizeof(unsigned char) * width * height),
-            .label = nameWithoutExt[0],
+            .bytes = image_bytes,
+            .label = dName[0], // TODO: change this?
             .width = width,
             .height = height
         };
-        memcpy(data->characters[data->characterCount - 1].bytes, image_bytes, sizeof(unsigned char) * width * height);
-        free(nameWithoutExt);
     }
 
     closedir(directory);

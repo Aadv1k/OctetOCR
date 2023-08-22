@@ -9,7 +9,6 @@ void octet_convert_rgb_image_to_grayscale(unsigned char* data, int width, int he
   unsigned char* grayscale_data = malloc(width * height); // Only one channel is needed
 
   if (!grayscale_data) {
-    // Handle memory allocation error
     return;
   }
 
@@ -28,8 +27,8 @@ void octet_convert_rgb_image_to_grayscale(unsigned char* data, int width, int he
     }
   }
 
-  free(data);
-  data = grayscale_data;
+  memcpy(data, grayscale_data, width * height);
+  free(grayscale_data);
 }
 
 void octet_threshold_grayscale_image(unsigned char* data, int width, int height, const int threshold) {
