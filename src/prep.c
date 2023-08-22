@@ -60,15 +60,28 @@ OctetData *octet_load_training_data_from_dir(const char *dirpath) {
         char *nameWithoutExt = strdup(dName);
         nameWithoutExt[strlen(nameWithoutExt) - strlen(ext) - 1] = '\0';
 
-        OctetCharacter* character = octet_load_character_from_image(filepath);
-        character->label = nameWithoutExt[0];
+        int width, height, channels;
+        unsigned char *image_bytes = stbi_load(filepath, &width, &height, &channels, 0);
+        if (image_bytes == NULL) {
+            free(nameWithoutExt);
+            continue;
+        }
+
+        if (channels != 1) {
+            octet_convert_rgb_image_to_grayscale(image_bytes, width, height);
+            channels = 1;
+        }
 
         data->characterCount++;
         data->characters = realloc(data->characters, sizeof(OctetCharacter) * data->characterCount);
-        memcpy(&data->characters[data->characterCount - 1], character, sizeof(OctetCharacter));
-
+        data->characters[data->characterCount - 1] = (OctetCharacter){
+            .bytes = malloc(sizeof(unsigned char) * width * height),
+            .label = nameWithoutExt[0],
+            .width = width,
+            .height = height
+        };
+        memcpy(data->characters[data->characterCount - 1].bytes, image_bytes, sizeof(unsigned char) * width * height);
         free(nameWithoutExt);
-        free(character);
     }
 
     closedir(directory);

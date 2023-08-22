@@ -1,7 +1,7 @@
 @echo off
 
 SET CC=gcc
-SET CFLAGS=-std=c99 -Wall -Wextra
+SET CFLAGS=-std=c99 -Wall -Wextra -pedantic
 SET SRC=src\*.c main.c
 SET EXEC=octet.exe
 SET INC_PATH=.\include 

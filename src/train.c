@@ -9,12 +9,12 @@
 #define numOfLabels 128
 
 float octet_knn_calculate_distance_for_character(OctetCharacter trainingCharacter, OctetCharacter testingCharacter) {
-  float finalDistance = 0;
+  double finalDistance = 0;
 
   for (int i = 0; i < trainingCharacter.height; i++) {
     for (int j = 0; j < trainingCharacter.width; j++) {
       int difference = abs(trainingCharacter.bytes[i * trainingCharacter.width + j] - testingCharacter.bytes[i * trainingCharacter.width + j]);
-      finalDistance += pow(difference, 2);
+      finalDistance += difference * difference;
     }
   }
   return sqrt(finalDistance);
@@ -25,11 +25,11 @@ int qsort_compare(const void *a, const void *b) {
   const OctetDistance *db = (const OctetDistance *)b;
 
   if (da->distance < db->distance) {
-      return -1;
+    return -1;
   } else if (da->distance > db->distance) {
-      return 1;
+    return 1;
   } else {
-      return 0;
+    return 0;
   }
 }
 
