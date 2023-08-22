@@ -73,7 +73,8 @@ Loading a dataset from a folder is slow since everytime pre-processing has to be
 
 ## TODO
 
-- [ ] Squash the compiler warnings, run a static memory analyzer, format the code
+- [X] Squash the compiler warnings, run a static memory analyzer, format the code 
+  - test using [DrMemory](https://drmemory.org/)
 - [ ] Further testing against varying levels of data, add more data to the [`dataset/`](./dataset)
 
 
