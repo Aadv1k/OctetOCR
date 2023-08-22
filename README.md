@@ -58,10 +58,11 @@ Loading a dataset from a folder is slow since everytime pre-processing has to be
 
 ## Gallery
 
+<!-- | <img src="./tests/test_data/test-A-cursive.jpg" width="100" /> |                                           |       | !-->
+
 | Input                                                          | Training Data                             | Match |
 |----------------------------------------------------------------|-------------------------------------------|-------|
 | <img src="./tests/test_data/test-A.jpg" width="100" />         | <img src="./dataset/A.jpg" width="100" /> | A     |
-| <img src="./tests/test_data/test-A-cursive.jpg" width="100" /> |                                           |       |
 | <img src="./tests/test_data/test-A-rounded.jpg" width="100" /> |                                           |       |
 
 ## Test

@@ -12,9 +12,9 @@ static MunitResult PrepareDataFromDir_Dataset_ShouldProcessAndLoad(const MunitPa
 
     trainingData = octet_load_training_data_from_dir(TEST_DATASET_PATH);
     munit_assert_not_null(trainingData);
-    munit_assert_int32(trainingData->characterCount, ==, 4);
+    munit_assert_int32(trainingData->characterCount, ==, 8);
 
-    char labels[4] = {'A', 'B', 'C', 'D'};
+    char labels[8] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
 
     for (int i = 0; i < trainingData->characterCount; i++) {
         munit_assert_uint8(trainingData->characters[i].label, ==, labels[i]);
