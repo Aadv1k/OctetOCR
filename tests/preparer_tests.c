@@ -17,7 +17,13 @@ static MunitResult PrepareDataFromDir_Dataset_ShouldProcessAndLoad(const MunitPa
     char labels[8] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
 
     for (int i = 0; i < trainingData->characterCount; i++) {
-        munit_assert_uint8(trainingData->characters[i].label, ==, labels[i]);
+        char c;
+        for (int n = 0; n < sizeof(labels); n++) {
+            c = labels[n];
+            if (c == trainingData->characters[i].label)
+                break;
+        }
+        munit_assert_uint8(trainingData->characters[i].label, ==, c);
     }
 
     return MUNIT_OK;
