@@ -11,5 +11,6 @@ int main(void) {
     printf("Expected label: A\nPredicted label: %c", predictedLabel);
 
     octet_free_character(character);
+    octet_free_training_data(trainingData);
     return 0;
 }
