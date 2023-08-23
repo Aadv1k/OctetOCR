@@ -13,11 +13,11 @@ typedef struct {
   int characterCount;
 } OctetData;
 
+OctetCharacter octet_load_character_from_image(const char *filepath);
+
+void octet_free_character(OctetCharacter character);
+
 OctetData *octet_load_training_data_from_dir(const char *dirpath);
-
-OctetCharacter* octet_load_character_from_image(const char *filepath);
-
-void octet_free_character(OctetCharacter* character);
 
 void octet_write_training_data_to_csv(OctetData *data, const char* filepath);
 
