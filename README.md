@@ -1,4 +1,4 @@
-# Octet
+# OctetOCR
 
 Octet is an OCR model training system, this includes functionality for both **preparing and training** the data.
 
