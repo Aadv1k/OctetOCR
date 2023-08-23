@@ -2,12 +2,13 @@
 
 Octet is an OCR model training system, this includes functionality for both **preparing and training** the data.
 
-This system implements a rudimentary [K-NN](https://www.ibm.com/topics/knn) function to predict the similarity of an `OctetCharacter` which contains the raw image data (`unsigned char*`) against a pre-computed array of characters derived from  [`dataset/`](./dataset)
+This system implements a rudimentary [K-NN](https://www.ibm.com/topics/knn) function to predict the similarity of an `OctetCharacter` which contains the raw image data (`unsigned char*`) against a pre-computed array of characters derived from [`dataset/`](./dataset)
 
 > **NOTE**
 > Library under active development, things may change or break. I also appreciate any input on the code, cheers!
 
 See:
+
 - [Examples](#examples)
 - [Gallery](#gallery)
 - [Test](#Test)
@@ -15,7 +16,7 @@ See:
 
 ## Examples
 
-See [example.c](./example.c) for how you might use this library 
+See [example.c](./example.c) for how you might use this library
 
 ### Prepare
 
@@ -60,12 +61,14 @@ Loading a dataset from a folder is slow since everytime pre-processing has to be
 
 ## Gallery
 
-<!-- | <img src="./tests/test_data/test-A-cursive.jpg" width="100" /> |                                           |       | !-->
+The program has been tested against the following samples, feel free to add to the [`./dataset`](./dataset), if you want an alt version of "A" in the dataset, jut name it something like `A1.jpg`
 
 | Input                                                          | Training Data                             | Match |
-|----------------------------------------------------------------|-------------------------------------------|-------|
+| -------------------------------------------------------------- | ----------------------------------------- | ----- |
 | <img src="./tests/test_data/test-A.jpg" width="100" />         | <img src="./dataset/A.jpg" width="100" /> | A     |
 | <img src="./tests/test_data/test-A-rounded.jpg" width="100" /> |                                           |       |
+| <img src="./tests/test_data/test-B.jpg" width="100" />         | <img src="./dataset/B.jpg" width="100" /> | B     |
+| <img src="./tests/test_data/test-B-alt.jpg" width="100" />     |                                           |       |
 
 ## Test
 
@@ -85,11 +88,8 @@ Credit to [rafael](https://github.com/rarafael) for the shell script
 ./octet_test
 ```
 
-
 ## TODO
 
-- [X] Squash the compiler warnings, run a static memory analyzer, format the code 
+- [x] Squash the compiler warnings, run a static memory analyzer, format the code
   - test using [DrMemory](https://drmemory.org/)
 - [ ] Further testing against varying levels of data, add more data to the [`dataset/`](./dataset)
-
-
