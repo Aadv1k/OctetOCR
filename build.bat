@@ -2,7 +2,7 @@
 
 SET CC=gcc
 SET CFLAGS=-std=c99 -Wall -Wextra -pedantic
-SET SRC=src\*.c main.c
+SET SRC=src\*.c example.c
 SET EXEC=octet.exe
 SET INC_PATH=.\include 
 

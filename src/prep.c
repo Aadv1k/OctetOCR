@@ -8,14 +8,17 @@
 #include <assert.h>
 #include <dirent.h>
 
-OctetCharacter* octet_load_character_from_image(const char *filepath) {
-  OctetCharacter* character = malloc(sizeof(OctetCharacter));
-
+OctetCharacter octet_load_character_from_image(const char *filepath) {
   int width, height, channels;
   unsigned char *image_bytes = stbi_load(filepath, &width, &height, &channels, 0);
+
   if (image_bytes == NULL) {
-    free(character);
-    return NULL;
+    return (OctetCharacter){
+      .label = '\0',
+      .bytes = NULL,
+      .width = 0,
+      .height = 0
+    };
   }
 
   if (channels != 1) {
@@ -25,15 +28,16 @@ OctetCharacter* octet_load_character_from_image(const char *filepath) {
 
   octet_threshold_grayscale_image(image_bytes, width, height,  /* threshold */ 128);
 
-  character->bytes = malloc(sizeof(unsigned char) * width * height);
-  character->label = '\0';
-  character->width = width;
-  character->height = height;
+  return (OctetCharacter){
+    .bytes = image_bytes,
+    .width = width,
+    .height = height,
+    .label = '\0',
+  };
 }
 
-void octet_free_character(OctetCharacter* character) {
-  free(character->bytes);
-  free(character);
+void octet_free_character(OctetCharacter character) {
+  free(character.bytes);
 }
 
 OctetData *octet_load_training_data_from_dir(const char *dirpath) {
@@ -45,6 +49,10 @@ OctetData *octet_load_training_data_from_dir(const char *dirpath) {
     }
 
     OctetData *data = malloc(sizeof(OctetData));
+    if (data == NULL) {
+        closedir(directory);
+        return NULL;
+    }
     data->characterCount = 0;
     data->characters = NULL;
 
@@ -57,31 +65,16 @@ OctetData *octet_load_training_data_from_dir(const char *dirpath) {
         if (strcmp(ext, "jpg") != 0 && strcmp(ext, "jpeg") != 0)
             continue;
 
-        char filepath[256];
+        char filepath[512];
         snprintf(filepath, sizeof(filepath), "%s/%s", dirpath, dName);
 
-
-        int width, height, channels;
-        unsigned char *image_bytes = stbi_load(filepath, &width, &height, &channels, 0);
-        if (image_bytes == NULL) {
-            continue;
+        OctetCharacter loadedCharacter = octet_load_character_from_image(filepath);
+        if (loadedCharacter.bytes != NULL) {
+            data->characterCount++;
+            data->characters = realloc(data->characters, sizeof(OctetCharacter) * data->characterCount);
+            data->characters[data->characterCount - 1] = loadedCharacter;
+            data->characters[data->characterCount - 1].label = dName[0];
         }
-
-        if (channels != 1) {
-            octet_convert_rgb_image_to_grayscale(image_bytes, width, height);
-            channels = 1;
-        }
-        
-        octet_threshold_grayscale_image(image_bytes, width, height,  /* threshold */ 128);
-
-        data->characterCount++;
-        data->characters = realloc(data->characters, sizeof(OctetCharacter) * data->characterCount);
-        data->characters[data->characterCount - 1] = (OctetCharacter){
-            .bytes = image_bytes,
-            .label = dName[0], // TODO: change this?
-            .width = width,
-            .height = height
-        };
     }
 
     closedir(directory);
@@ -113,11 +106,10 @@ void octet_write_training_data_to_csv(OctetData *data, const char *filepath) {
     for (int i = 0; i < data->characterCount; i++) {
         OctetCharacter *character = &data->characters[i];
 
-       if (character->width <= 0 && character->height <= 0) {
+        if (character->bytes == NULL) {
             fclose(csvFile);
             return;
         }
-
 
         fprintf(csvFile, "%d,%d,%c,", character->width, character->height, character->label);
 

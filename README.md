@@ -15,6 +15,8 @@ See:
 
 ## Examples
 
+See [example.c](./example.c) for how you might use this library 
+
 ### Prepare
 
 Loading a dataset from a folder is slow since everytime pre-processing has to be applied. Hence it is adviced that the data be serialized as a CSV and read from there instead, here is what that may look like :-
@@ -45,7 +47,7 @@ Loading a dataset from a folder is slow since everytime pre-processing has to be
   /* ... */
 
   OctetData* trainingData = octet_load_training_data_from_dir("./dataset");
-  OctetCharacter* testCharacter = octet_load_character_from_image("./tests/test_data/test-A.jpg");
+  OctetCharacter testCharacter = octet_load_character_from_image("./tests/test_data/test-A.jpg");
 
   char predictedLabel = octet_k_nearest_neighbour(testCharacter, trainingData, /* k */ 3);
   assert(predictedLabel == 'A');
