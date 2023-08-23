@@ -67,10 +67,22 @@ Loading a dataset from a folder is slow since everytime pre-processing has to be
 
 ## Test
 
+### Win32
+
 ```console
 .\build.bat TEST
 .\octet_test.exe
 ```
+
+### Unix
+
+Credit to [rafael](https://github.com/rarafael) for the shell script
+
+```console
+./build.sh TEST
+./octet_test
+```
+
 
 ## TODO
 
