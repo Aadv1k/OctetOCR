@@ -4,9 +4,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <octet/stb_image.h>
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <dirent.h>
+#include <string.h>
 
 OctetCharacter octet_load_character_from_image(const char *filepath) {
   int width, height, channels;
@@ -92,7 +94,7 @@ void octet_free_training_data(OctetData *data) {
 
 void octet_write_training_data_to_csv(OctetData *data, const char *filepath) {
 
-    if (data == NULL || data->characterCount == 0 || data->characters == NULL) {
+    if (data == NULL || data->characterCount == 0 || data->characters == NULL || filepath == NULL) {
         return;
     }
 
@@ -126,7 +128,65 @@ void octet_write_training_data_to_csv(OctetData *data, const char *filepath) {
 }
 
 OctetData *octet_load_training_data_from_csv(const char *filename) {
-  (void)filename;
-  assert(0 && "Not implemented");
-  return NULL;
+    if (filename == NULL)
+        return NULL;
+
+    FILE *csvFile = fopen(filename, "r");
+
+    if (csvFile == NULL)
+        return NULL;
+
+    char *fileBuffer = malloc(BUFSIZ); /* should be hard to go over 4Kb in size */
+    fileBuffer = fgets(fileBuffer, BUFSIZ, csvFile);
+
+    /* check if first line is from the print csv */
+    if (strcmp(fileBuffer, "width,height,label,image_bytes_as_uint8\n") != 0)
+        return NULL;
+
+    OctetData *data = malloc(sizeof(OctetData));
+    if (data == NULL)
+        return NULL;
+    data->characterCount = 0;
+    data->characters = NULL;
+
+    while ((fileBuffer = fgets(fileBuffer, BUFSIZ, csvFile)) != 0) {
+        char *c = &fileBuffer[0];
+        int parsingStage = 0;
+        int imageWidth = 0, imageHeight = 0, imageBufferSize = 0;
+        char imageLabel = 0;
+        unsigned char *imageBuffer = NULL;
+
+        int n = 0;
+        while(*c != '\n') {
+            if (parsingStage == 0) {
+                imageWidth = strtol(c, &c, 10);
+                c++;
+                imageHeight = strtol(c, &c, 10);
+                c++;
+                imageLabel = *c;
+                c += 2;
+
+                imageBufferSize = imageWidth * imageHeight;
+                imageBuffer = malloc(imageBufferSize);
+
+                parsingStage = 1;
+
+                continue;
+            }
+
+            imageBuffer[n++] = strtol(c, &c, 10);
+        }
+
+        data->characterCount++;
+        data->characters = realloc(data->characters, sizeof(OctetCharacter) * data->characterCount);
+        data->characters[data->characterCount - 1] = (OctetCharacter) {
+            .bytes = imageBuffer,
+            .label = imageLabel,
+            .height = imageHeight,
+            .width = imageWidth
+        };
+    }
+
+    free(fileBuffer);
+    return data;
 }
