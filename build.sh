@@ -18,4 +18,11 @@ if [ "$1" = "LIB" ]; then
     return 0
 fi
 
-exec ${CC} ${CFLAGS} ${LDFLAGS} ${SRC} -o ${BIN}
+if [ "$1" = "CLEAN" ]; then
+    rm -v ./octet
+    rm -v ./octet_test
+    rm -v ./liboctet.so
+    return 0
+fi
+
+exec ${CC} ${CFLAGS} ${LDFLAGS} ${SRC} -ggdb -o ${BIN}
