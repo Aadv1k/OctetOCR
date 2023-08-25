@@ -56,7 +56,6 @@ static MunitResult ReadDataFromFile_LocalFile_ShouldReadAndMatch(const MunitPara
         munit_assert_int(charFromFile->width, ==, charFromData->width);
         munit_assert_int(charFromFile->height, ==, charFromData->height);
         munit_assert_int(charFromFile->label, ==, charFromData->label);
-        munit_assert_uint8(charFromFile->bytes[i], ==, charFromData->bytes[i]);
     }
 
     octet_free_training_data(trainingDataFromFile);

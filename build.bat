@@ -6,6 +6,12 @@ SET SRC=src\*.c example.c
 SET EXEC=octet.exe
 SET INC_PATH=.\include 
 
+IF "%1%" == "DEBUG" (
+  SET EXEC=octet_debug.exe
+  SET CFLAGS=%CLFAGS% -ggdb
+)
+
+
 IF "%1%" == "TEST" (
   SET SRC=src\*.c tests\*.c tests\munit\munit.c
   SET EXEC=octet_test.exe

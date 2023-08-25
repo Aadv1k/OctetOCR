@@ -93,7 +93,6 @@ void octet_free_training_data(OctetData *data) {
 }
 
 void octet_write_training_data_to_csv(OctetData *data, const char *filepath) {
-
     if (data == NULL || data->characterCount == 0 || data->characters == NULL || filepath == NULL) {
         return;
     }
@@ -128,65 +127,82 @@ void octet_write_training_data_to_csv(OctetData *data, const char *filepath) {
 }
 
 OctetData *octet_load_training_data_from_csv(const char *filename) {
-    if (filename == NULL)
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("Failed to open file");
         return NULL;
-
-    FILE *csvFile = fopen(filename, "r");
-
-    if (csvFile == NULL)
-        return NULL;
-
-    char *fileBuffer = malloc(BUFSIZ); /* should be hard to go over 4Kb in size */
-    fileBuffer = fgets(fileBuffer, BUFSIZ, csvFile);
-
-    /* check if first line is from the print csv */
-    if (strcmp(fileBuffer, "width,height,label,image_bytes_as_uint8\n") != 0)
-        return NULL;
-
-    OctetData *data = malloc(sizeof(OctetData));
-    if (data == NULL)
-        return NULL;
-    data->characterCount = 0;
-    data->characters = NULL;
-
-    while ((fileBuffer = fgets(fileBuffer, BUFSIZ, csvFile)) != 0) {
-        char *c = &fileBuffer[0];
-        int parsingStage = 0;
-        int imageWidth = 0, imageHeight = 0, imageBufferSize = 0;
-        char imageLabel = 0;
-        unsigned char *imageBuffer = NULL;
-
-        int n = 0;
-        while(*c != '\n') {
-            if (parsingStage == 0) {
-                imageWidth = strtol(c, &c, 10);
-                c++;
-                imageHeight = strtol(c, &c, 10);
-                c++;
-                imageLabel = *c;
-                c += 2;
-
-                imageBufferSize = imageWidth * imageHeight;
-                imageBuffer = malloc(imageBufferSize);
-
-                parsingStage = 1;
-
-                continue;
-            }
-
-            imageBuffer[n++] = strtol(c, &c, 10);
-        }
-
-        data->characterCount++;
-        data->characters = realloc(data->characters, sizeof(OctetCharacter) * data->characterCount);
-        data->characters[data->characterCount - 1] = (OctetCharacter) {
-            .bytes = imageBuffer,
-            .label = imageLabel,
-            .height = imageHeight,
-            .width = imageWidth
-        };
     }
 
-    free(fileBuffer);
+    int lineCount = 0;
+    char ch;
+    while ((ch = fgetc(file)) != EOF) {
+        if (ch == '\n') {
+            lineCount++;
+        }
+    }
+    rewind(file);
+
+    OctetData *data = (OctetData *)malloc(sizeof(OctetData));
+    if (!data) {
+        fclose(file);
+        return NULL;
+    }
+
+    data->characterCount = lineCount;
+    data->characters = (OctetCharacter *)malloc(sizeof(OctetCharacter) * lineCount);
+    if (!data->characters) {
+        free(data);
+        fclose(file);
+        return NULL;
+    }
+
+    for (int i = 0; i < lineCount; i++) {
+        OctetCharacter *character = &data->characters[i];
+        int width, height;
+        char label;
+
+        if (fscanf(file, "%d,%d,%c\n", &width, &height, &label) != 3) {
+            // Error reading line
+            for (int j = 0; j < i; j++) {
+                free(data->characters[j].bytes);
+            }
+            free(data->characters);
+            free(data);
+            fclose(file);
+            return NULL;
+        }
+
+        character->width = width;
+        character->height = height;
+        character->label = label;
+
+        character->bytes = (unsigned char *)malloc(character->width * character->height);
+        if (!character->bytes) {
+            for (int j = 0; j < i; j++) {
+                free(data->characters[j].bytes);
+            }
+            free(data->characters);
+            free(data);
+            fclose(file);
+            return NULL;
+        }
+
+        for (int j = 0; j < character->width * character->height; j++) {
+            int byte;
+            if (fscanf(file, "%d,", &byte) != 1) {
+                // Error reading byte
+                for (int j = 0; j < i; j++) {
+                    free(data->characters[j].bytes);
+                }
+                free(data->characters);
+                free(data);
+                fclose(file);
+                return NULL;
+            }
+            character->bytes[j] = (unsigned char)byte;
+        }
+    }
+
+    fclose(file);
     return data;
 }
