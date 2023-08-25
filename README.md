@@ -12,7 +12,7 @@ See:
 - [Examples](#examples)
 - [Gallery](#gallery)
 - [Test](#Test)
-- [Todo](#todo)
+- [Credits](#Credits]
 
 ## Examples
 
@@ -81,15 +81,16 @@ The program has been tested against the following samples, feel free to add to t
 
 ### Unix
 
-Credit to [rafael](https://github.com/rarafael) for the shell script
+Credit to [rarafael](https://github.com/rarafael) for the shell script
 
 ```console
 ./build.sh TEST
 ./octet_test
 ```
 
-## TODO
+## Credits
 
-- [x] Squash the compiler warnings, run a static memory analyzer, format the code
-  - test using [DrMemory](https://drmemory.org/)
-- [ ] Further testing against varying levels of data, add more data to the [`dataset/`](./dataset)
+Credit to [rarafael](https://github.com/rarafael) for 
+- Providing the `build.sh` script
+- Implementing `octet_load_training_data_from_csv` at [src/prep.c](./src/prep.c)
+- General quality of life improvements
