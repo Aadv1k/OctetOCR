@@ -18,4 +18,11 @@ IF "%1%" == "LIB" (
   exit 0
 )
 
+if "%1%" == "CLEAN" (
+    del "octet.exe"
+    del "octet_test.exe"
+    del "liboctet.dll"
+    exit 0
+)
+
 %CC% %CFLAGS% -I %INC_PATH% %SRC% -o %EXEC%

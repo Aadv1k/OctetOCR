@@ -8,8 +8,10 @@ int main(void) {
     OctetCharacter character = octet_load_character_from_image("./tests/test_data/test-A.jpg");
     char predictedLabel = octet_k_nearest_neighbour(character, trainingData, 1);
 
-    printf("Expected label: A\nPredicted label: %c", predictedLabel);
+    octet_write_training_data_to_csv(trainingData, "data.csv");
+    printf("Expected label: A\nPredicted label: %c\n", predictedLabel);
 
     octet_free_character(character);
+    octet_free_training_data(trainingData);
     return 0;
 }

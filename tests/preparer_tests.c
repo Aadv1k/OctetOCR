@@ -4,13 +4,11 @@
 #define TEST_DATASET_PATH "./dataset/"
 #define TEMP_DATA_PATH "./temp.csv"
 
-static OctetData *trainingData;
-
 static MunitResult PrepareDataFromDir_Dataset_ShouldProcessAndLoad(const MunitParameter params[], void* data) {
     (void)params;
     (void)data;
 
-    trainingData = octet_load_training_data_from_dir(TEST_DATASET_PATH);
+    OctetData *trainingData = octet_load_training_data_from_dir(TEST_DATASET_PATH);
     munit_assert_not_null(trainingData);
     munit_assert_int32(trainingData->characterCount, ==, 8);
 
@@ -18,7 +16,7 @@ static MunitResult PrepareDataFromDir_Dataset_ShouldProcessAndLoad(const MunitPa
 
     for (int i = 0; i < trainingData->characterCount; i++) {
         char c;
-        for (int n = 0; n < sizeof(labels); n++) {
+        for (int n = 0; n < (int)sizeof(labels); n++) {
             c = labels[n];
             if (c == trainingData->characters[i].label)
                 break;
@@ -33,21 +31,19 @@ static MunitResult WriteDataToFile_OctetData_ShouldWrite(const MunitParameter pa
     (void)params;
     (void)data;
 
+    OctetData *trainingData = octet_load_training_data_from_dir(TEST_DATASET_PATH);
     octet_write_training_data_to_csv(trainingData, TEMP_DATA_PATH);
 
     return MUNIT_OK;
 }
 
 static MunitResult ReadDataFromFile_LocalFile_ShouldReadAndMatch(const MunitParameter params[], void* data) {
-
-    // NOTE: remove this from here
-    octet_free_training_data(trainingData);
-    return MUNIT_SKIP;
-
     (void)params;
     (void)data;
 
-    OctetData* trainingDataFromFile = octet_load_training_data_from_csv(TEMP_DATA_PATH);
+    OctetData *trainingData = octet_load_training_data_from_dir(TEST_DATASET_PATH);
+    octet_write_training_data_to_csv(trainingData, TEMP_DATA_PATH);
+    OctetData *trainingDataFromFile = octet_load_training_data_from_csv(TEMP_DATA_PATH);
     munit_assert_not_null(trainingDataFromFile);
 
     // Assuming you have 'trainingData' initialized and populated with data for comparison
